@@ -1,8 +1,11 @@
-if __name__ == "__main__":
-    import wx
-    import gui
+import sys
 
-    app = wx.App()
-    frame = gui.DataGingerFrame(None, title="Hello World!")
-    frame.Show()
-    app.MainLoop()
+from PySide2.QtWidgets import QApplication
+
+from gui import DataGingerWindow
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    main_window = DataGingerWindow()
+    main_window.show()
+    sys.exit(app.exec_())
