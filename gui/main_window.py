@@ -4,8 +4,11 @@ This module contains everything related to the GUI.
 
 import sys
 
-from PySide2.QtWidgets import QMainWindow, QAction, QPushButton, QLabel, QVBoxLayout, QWidget, QMenuBar, QStatusBar, \
+from PySide2.QtGui import QKeySequence
+from PySide2.QtWidgets import QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget, QMenuBar, QStatusBar, \
     QTableWidget, QTableWidgetItem, QMdiArea
+
+from gui.action_utility import ActionFactory
 
 
 class DataGingerWindow(QMainWindow):
@@ -38,19 +41,12 @@ class DataGingerWindow(QMainWindow):
             The top menu.
         """
         menu = self.menuBar()
+
         file_menu = menu.addMenu(self.tr("File"))
+        file_menu.addAction(ActionFactory(self.tr("Quit"), self, self.quit).with_shortcut(QKeySequence.Quit).create())
+
         help_menu = menu.addMenu(self.tr("Help"))
-
-        quit_action = QAction(self.tr("Quit"), self)
-        quit_action.setShortcut("Ctrl+Q")
-        quit_action.triggered.connect(self.quit)
-        quit_action.setMenuRole(QAction.NoRole)
-        file_menu.addAction(quit_action)
-
-        about_action = QAction(self.tr("About"), self)
-        about_action.triggered.connect(self.about)
-        about_action.setMenuRole(QAction.NoRole)
-        help_menu.addAction(about_action)
+        help_menu.addAction(ActionFactory(self.tr("About"), self, self.about).create())
 
         return menu
 
@@ -89,8 +85,10 @@ class DataGingerWindow(QMainWindow):
 
         area = QMdiArea(self)
         area.setViewMode(QMdiArea.TabbedView)
-        area.addSubWindow(widget)
-        area.addSubWindow(widget2)
+        w1 = area.addSubWindow(widget)
+        w1.setWindowTitle("Document 1")
+        w2 = area.addSubWindow(widget2)
+        w2.setWindowTitle("Document 2")
 
         return area
 
