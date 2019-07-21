@@ -25,7 +25,6 @@ class ActionFactory:
         """
         self.action = QAction(name, parent)
         self.action.triggered.connect(callback)
-        self.action.setMenuRole(QAction.NoRole)
 
     def create(self) -> QAction:
         """
