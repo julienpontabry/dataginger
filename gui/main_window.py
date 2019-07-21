@@ -9,6 +9,7 @@ from PySide2.QtWidgets import QMainWindow, QPushButton, QLabel, QVBoxLayout, QWi
     QTableWidget, QTableWidgetItem, QMdiArea
 
 from gui.action_utility import ActionFactory
+from gui.message_box import closed_question
 
 
 class DataGingerWindow(QMainWindow):
@@ -92,12 +93,12 @@ class DataGingerWindow(QMainWindow):
 
         return area
 
-    @staticmethod
-    def quit():
+    def quit(self):
         """
         Exit the application.
         """
-        sys.exit()
+        if closed_question(self, self.windowTitle(), "Do you really want to leave the application?"):
+            sys.exit()
 
     @staticmethod
     def about():
