@@ -4,7 +4,8 @@ This module contains everything related to the GUI.
 
 import sys
 
-from PySide2.QtWidgets import QMainWindow, QAction, QWidget, QMenuBar, QStatusBar, QTableWidget, QTableWidgetItem
+from PySide2.QtWidgets import QMainWindow, QAction, QPushButton, QLabel, QVBoxLayout, QWidget, QMenuBar, QStatusBar, \
+    QTableWidget, QTableWidgetItem, QMdiArea
 
 
 class DataGingerWindow(QMainWindow):
@@ -66,7 +67,7 @@ class DataGingerWindow(QMainWindow):
 
         return status
 
-    def build_main_component(self) -> QWidget:
+    def build_main_component(self) -> QMdiArea:
         """
         Build the main frame's component.
 
@@ -74,20 +75,24 @@ class DataGingerWindow(QMainWindow):
         -------
             The main component.
         """
-        # widget = QWidget()
-        # layout = QVBoxLayout()
-        # widget.setLayout(layout)
-        # layout.addWidget(QLabel(self.tr("Coucou !")))
-        # button = QPushButton(self.tr("Prout"))
-        # button.clicked.connect(self.test)
-        # layout.addWidget(button)
+        widget = QWidget()
+        layout = QVBoxLayout()
+        widget.setLayout(layout)
+        layout.addWidget(QLabel(self.tr("Coucou !")))
+        button = QPushButton(self.tr("Prout"))
+        layout.addWidget(button)
 
-        widget = QTableWidget(5, 2, self)
-        widget.setHorizontalHeaderItem(1, QTableWidgetItem("Prout"))
-        widget.setVerticalHeaderItem(2, QTableWidgetItem("Prout v"))
-        widget.setItem(2, 1, QTableWidgetItem("Test"))
+        widget2 = QTableWidget(5, 2, self)
+        widget2.setHorizontalHeaderItem(1, QTableWidgetItem("Prout"))
+        widget2.setVerticalHeaderItem(2, QTableWidgetItem("Prout v"))
+        widget2.setItem(2, 1, QTableWidgetItem("Test"))
 
-        return widget
+        area = QMdiArea(self)
+        area.setViewMode(QMdiArea.TabbedView)
+        area.addSubWindow(widget)
+        area.addSubWindow(widget2)
+
+        return area
 
     @staticmethod
     def quit():
