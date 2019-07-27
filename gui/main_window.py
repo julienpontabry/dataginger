@@ -5,7 +5,7 @@ This module contains everything related to the GUI.
 import sys
 
 from PySide2.QtGui import QKeySequence
-from PySide2.QtWidgets import QMainWindow, QMenuBar, QStatusBar
+from PySide2.QtWidgets import QMainWindow, QMenuBar, QStatusBar, QFileDialog
 
 from gui.action_utility import ActionFactory
 from gui.data_table import DataTableViewer
@@ -31,7 +31,9 @@ class DataGingerWindow(QMainWindow):
         self.setWindowTitle("Data Ginger")
         self.setMenuBar(self.build_menu())
         self.status = self.build_status_bar()
-        self.setCentralWidget(DataTableViewer(self))
+
+        self.table_viewer = DataTableViewer(self)
+        self.setCentralWidget(self.table_viewer)
 
     def build_menu(self) -> QMenuBar:
         """
@@ -44,6 +46,7 @@ class DataGingerWindow(QMainWindow):
         menu = self.menuBar()
 
         file_menu = menu.addMenu(self.tr("File"))
+        file_menu.addAction(ActionFactory(self.tr("Open"), self, self.open).with_shortcut(QKeySequence.Open).create())
         file_menu.addAction(ActionFactory(self.tr("Quit"), self, self.quit).with_shortcut(QKeySequence.Quit).create())
 
         help_menu = menu.addMenu(self.tr("Help"))
@@ -70,6 +73,16 @@ class DataGingerWindow(QMainWindow):
         """
         if closed_question(self, self.windowTitle(), "Do you really want to leave the application?"):
             sys.exit()
+
+    def open(self):
+        """
+        Open a table from file.
+        """
+        file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Open data table"), "", self.tr("CSV files (*.csv)"))
+
+        if file_path != "":
+            self.table_viewer.open_table(file_path)
+            self.status.showMessage(self.tr("Table loaded."))
 
     @staticmethod
     def about():

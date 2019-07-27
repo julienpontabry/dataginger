@@ -2,7 +2,8 @@
 Class for handling of data tables
 """
 
-from PySide2.QtWidgets import QMdiArea, QPushButton, QVBoxLayout, QLabel, QWidget, QTableWidget, QTableWidgetItem
+import pandas as pd
+from PySide2.QtWidgets import QMdiArea, QTableWidget, QTableWidgetItem
 
 
 class DataTableViewer(QMdiArea):
@@ -23,19 +24,25 @@ class DataTableViewer(QMdiArea):
 
         self.setViewMode(QMdiArea.TabbedView)
 
-        widget = QWidget()
-        layout = QVBoxLayout()
-        widget.setLayout(layout)
-        layout.addWidget(QLabel(self.tr("Coucou !")))
-        button = QPushButton(self.tr("Prout"))
-        layout.addWidget(button)
+    def open_table(self, file_path: str):
+        """
+        Open table from file at given path.
 
-        widget2 = QTableWidget(5, 2, self)
-        widget2.setHorizontalHeaderItem(1, QTableWidgetItem("Prout"))
-        widget2.setVerticalHeaderItem(2, QTableWidgetItem("Prout v"))
-        widget2.setItem(2, 1, QTableWidgetItem("Test"))
+        Parameters
+        ----------
+        file_path: Path to the file to open.
+        """
+        data = pd.read_csv(file_path)
+        n_rows, n_cols = data.shape
+        table = QTableWidget(n_rows, n_cols, self)
 
-        w1 = self.addSubWindow(widget)
-        w1.setWindowTitle("Document 1")
-        w2 = self.addSubWindow(widget2)
-        w2.setWindowTitle("Document 2")
+        for j, column_name in enumerate(data.columns):
+            table.setHorizontalHeaderItem(j, QTableWidgetItem(column_name))
+
+        for i in range(n_rows):
+            for j in range(n_cols):
+                table.setItem(i, j, QTableWidgetItem(str(data.iloc[i, j])))
+
+        tab = self.addSubWindow(table)
+        tab.setWindowTitle(file_path)
+        tab.showMaximized()
