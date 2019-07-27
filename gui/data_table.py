@@ -39,9 +39,11 @@ class DataTableViewer(QMdiArea):
         for j, column_name in enumerate(data.columns):
             table.setHorizontalHeaderItem(j, QTableWidgetItem(column_name))
 
-        for i in range(n_rows):
-            for j in range(n_cols):
-                table.setItem(i, j, QTableWidgetItem(str(data.iloc[i, j])))
+        for (i, row), index in zip(enumerate(data.values), data.index.values):
+            table.setVerticalHeaderItem(i, QTableWidgetItem(str(index)))
+
+            for j, element in enumerate(row):
+                table.setItem(i, j, QTableWidgetItem(str(element)))
 
         tab = self.addSubWindow(table)
         tab.setWindowTitle(file_path)
