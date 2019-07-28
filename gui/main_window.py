@@ -29,8 +29,10 @@ class DataGingerWindow(QMainWindow):
         super(DataGingerWindow, self).__init__(*args, **kwargs)
 
         self.setWindowTitle("Data Ginger")
-        self.setMenuBar(self.build_menu())
         self.status = self.build_status_bar()
+
+        self.close_action = None
+        self.setMenuBar(self.build_menu())
 
         self.table_viewer = DataTableViewer(self)
         self.setCentralWidget(self.table_viewer)
@@ -46,8 +48,19 @@ class DataGingerWindow(QMainWindow):
         menu = self.menuBar()
 
         file_menu = menu.addMenu(self.tr("File"))
-        file_menu.addAction(ActionFactory(self.tr("Open"), self, self.open).with_shortcut(QKeySequence.Open).create())
-        file_menu.addAction(ActionFactory(self.tr("Quit"), self, self.quit).with_shortcut(QKeySequence.Quit).create())
+        file_menu.addAction(ActionFactory(self.tr("Open"), self, self.open)
+                            .with_shortcut(QKeySequence.Open)
+                            .create())
+        file_menu.addSeparator()
+        self.close_action = ActionFactory(self.tr("Close"), self, self.close)\
+            .with_shortcut(QKeySequence.Close)\
+            .deactivated()\
+            .create()
+        file_menu.addAction(self.close_action)
+        file_menu.addSeparator()
+        file_menu.addAction(ActionFactory(self.tr("Quit"), self, self.quit)
+                            .with_shortcut(QKeySequence.Quit)
+                            .create())
 
         help_menu = menu.addMenu(self.tr("Help"))
         help_menu.addAction(ActionFactory(self.tr("About"), self, self.about).create())
@@ -83,6 +96,18 @@ class DataGingerWindow(QMainWindow):
         if file_path != "":
             self.table_viewer.open_table(file_path)
             self.status.showMessage(self.tr("Table loaded."))
+
+            if not self.close_action.isEnabled():
+                self.close_action.setEnabled(True)
+
+    def close(self):
+        """
+        Close the currently selected table.
+        """
+        self.table_viewer.close_current_table()
+
+        if self.table_viewer.number_of_opened_tables() < 1:
+            self.close_action.setEnabled(False)
 
     @staticmethod
     def about():

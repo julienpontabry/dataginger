@@ -46,7 +46,18 @@ class ActionFactory:
 
         Returns
         -------
-            The current factory instance for fluent programming style;
+            The current factory instance for fluent programming style.
         """
         self.action.setShortcut(shortcut)
+        return self
+
+    def deactivated(self):
+        """
+        Deactivate the action.
+
+        Returns
+        -------
+            The current factory instance for fluent programming style.
+        """
+        self.action.setEnabled(False)
         return self

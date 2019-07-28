@@ -24,6 +24,16 @@ class DataTableViewer(QMdiArea):
 
         self.setViewMode(QMdiArea.TabbedView)
 
+    def number_of_opened_tables(self):
+        """
+        Get the number of currently opened tables.
+
+        Returns
+        -------
+            The number of opened tables.
+        """
+        return len(self.subWindowList())
+
     def open_table(self, file_path: str):
         """
         Open table from file at given path.
@@ -46,5 +56,14 @@ class DataTableViewer(QMdiArea):
                 table.setItem(i, j, QTableWidgetItem(str(element)))
 
         tab = self.addSubWindow(table)
+        tab.data = data
         tab.setWindowTitle(file_path)
         tab.showMaximized()
+
+    def close_current_table(self):
+        """
+        Close the currently selected table and free memory.
+        """
+        selected_tab = self.activeSubWindow()
+        del selected_tab.data
+        selected_tab.close()
