@@ -105,6 +105,7 @@ class DataGingerWindow(QMainWindow):
         Close the currently selected table.
         """
         self.table_viewer.close_current_table()
+        self.status.showMessage(self.tr("Table closed."))
 
         if self.table_viewer.number_of_opened_tables() < 1:
             self.close_action.setEnabled(False)
