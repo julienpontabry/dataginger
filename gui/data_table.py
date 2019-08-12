@@ -4,7 +4,6 @@ Class for handling of data tables
 
 import pandas as pd
 from PySide2.QtWidgets import QMdiArea, QTableWidget, QTableWidgetItem
-from pandas import DataFrame
 
 
 class DataTableViewer(QMdiArea):
@@ -49,7 +48,7 @@ class DataTableViewer(QMdiArea):
 
         header = table.horizontalHeader()
         header.setSectionsMovable(True)
-        header.sectionMoved.connect(lambda i1, _, i2: self.column_rearranged(data, i1, i2))
+        header.sectionMoved.connect(lambda _, i1, i2: self.column_rearranged(i1, i2))
 
         for j, column_name in enumerate(data.columns):
             table.setHorizontalHeaderItem(j, QTableWidgetItem(column_name))
@@ -73,21 +72,16 @@ class DataTableViewer(QMdiArea):
         del selected_tab.data
         selected_tab.close()
 
-    @staticmethod
-    def column_rearranged(data: DataFrame, old_index: int, new_index: int):
+    def column_rearranged(self, old_index: int, new_index: int):
         """
-        Rearrange columns order.
+        Rearrange columns order in active table.
 
         Parameters
         ----------
-        data: Data frame which columns will be rearranged.
         old_index: Old index of the column being moved.
         new_index: New index of the column being moved.
         """
+        data = self.activeSubWindow().data
         columns = list(data.columns)
-        tmp = columns[old_index]
-        columns[old_index] = columns[new_index]
-        columns[new_index] = tmp
-        data = data.loc[:, columns]
-
-        print(data.head())
+        columns.insert(new_index, columns.pop(old_index))
+        self.activeSubWindow().data = data.loc[:, columns]
